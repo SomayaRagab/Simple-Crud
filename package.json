@@ -1,0 +1,25 @@
+{
+  "name": "simple-crud",
+  "version": "1.0.0",
+  "description": "simple crud with mongoose , typescript and jwt ",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SomayaRagab/Simple-Crud.git"
+  },
+  "author": "somaya-ragab",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SomayaRagab/Simple-Crud/issues"
+  },
+  "homepage": "https://github.com/SomayaRagab/Simple-Crud#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
