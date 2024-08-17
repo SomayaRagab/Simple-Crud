@@ -1,6 +1,6 @@
 # Simple-Crud API with Users and Posts
 
-This repository contains a simple API built with Node.js, Express, and TypeScript. The API includes routes for managing users and posts, with support for JWT-based authentication. It also supports features like filtering, sorting, pagination, and selecting specific fields.
+This repository contains a simple API built with Node.js, Express, mongoose and TypeScript. The API includes routes for managing users and posts, with support for JWT-based authentication. It also supports features like filtering, sorting, pagination, and selecting specific fields.
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@ This repository contains a simple API built with Node.js, Express, and TypeScrip
 ### Prerequisites
 
 - Node.js (>= 14.x)
-- MongoDB or Connection on MongoAtlas
+- MongoDB or Connection on MongoAtlas (i use mongoAtlas)
 - Yarn or npm
 
 ### Installation
@@ -113,10 +113,9 @@ You can select specific fields to return by using the `fields` query parameter. 
 ## Environment Variables
 
 Create a `.env` file in the root of your project with the following variables:
-NODE_ENV is development or production
-PORT
 
-- Mongo Atlas
+- NODE_ENV is development or production
+- PORT
 - DATABASE like mongodb+srv://USERNAME:<PASSWORD>@CLUSTER/DATABASENAME
 - DATABASE_PASSWORD
 - JWT_SECRET
