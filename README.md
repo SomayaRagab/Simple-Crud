@@ -88,15 +88,7 @@ This API uses JWT for authentication. To access protected routes, include a vali
 
 Protected routes include:
 
-- GET /api/v1/users
-- POST /api/v1/users
-- PATCH /api/v1/users/:id
-- DELETE /api/v1/users/:id
-
-- GET /api/v1/posts
-- POST /api/v1/posts
-- PATCH /api/v1/posts/:id
-- DELETE /api/v1/posts/:id
+- All route protected
 
 ## Features
 
@@ -124,7 +116,7 @@ Create a `.env` file in the root of your project with the following variables:
 NODE_ENV is development or production
 PORT
 
-Mongo Atlas
-DATABASE like mongodb+srv://USERNAME:<PASSWORD>@CLUSTER/DATABASENAME
-DATABASE_PASSWORD
-JWT_SECRET
+- Mongo Atlas
+- DATABASE like mongodb+srv://USERNAME:<PASSWORD>@CLUSTER/DATABASENAME
+- DATABASE_PASSWORD
+- JWT_SECRET
