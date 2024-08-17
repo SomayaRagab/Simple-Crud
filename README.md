@@ -116,6 +116,6 @@ Create a `.env` file in the root of your project with the following variables:
 
 - NODE_ENV is development or production
 - PORT
-- DATABASE like mongodb+srv://USERNAME:<PASSWORD>@CLUSTER/DATABASENAME
+- DATABASE like mongodb+srv://USERNAME:**<PASSWORD>**@CLUSTER/DATABASENAME
 - DATABASE_PASSWORD
 - JWT_SECRET
