@@ -15,8 +15,8 @@ export const protect = catchAsync(
     }
 
     // 2) Verification token
-    const decoded: any = await jwt.verify(token, process.env.JWT_SECRET || '');
-    console.log(decoded);
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET || '');
+
 
     // 3) Check if user still exists
     const currentUser = await User.findById(decoded.id);
@@ -24,6 +24,14 @@ export const protect = catchAsync(
       return res.status(401).json({
         status: 'fail',
         message: 'The user belonging to this token does no longer exist.',
+      });
+    }
+
+    // 4) Check if user changed password after the token was issued
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      return res.status(401).json({
+        status: 'fail',
+        message: 'User recently changed password! Please log in again.',
       });
     }
 

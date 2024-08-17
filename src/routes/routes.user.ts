@@ -5,6 +5,9 @@ import {
   getAllUsers,
   updateUser,
   deleteUser,
+  updatePassword,
+  updateMe,
+  getMe,
 } from '../controllers/controllers.user';
 import {
   createUserValidation,
@@ -15,15 +18,16 @@ import middlewaresValidation from '../middlewares/middlewares.validation';
 import { protect, restrictTo } from '../middlewares/middlewares.auth';
 
 export default (router: Router): Router => {
+  // GIVE PROFILE
+  router.get('/profile', protect, getMe);
+  router.patch('/profile', protect, updateMe);
+  router.patch('/profile/password', protect, updatePassword);
+
   router
     .route('/users')
-    .get(
-      protect,
-      // restrictTo('manager', 'admin'),
-      getAllUsers
-    )
+    .get(protect, restrictTo('manager', 'admin'), getAllUsers)
     .post(
-      // restrictTo('admin'),
+      restrictTo('admin'),
       createUserValidation,
       middlewaresValidation,
       createUser
@@ -31,13 +35,14 @@ export default (router: Router): Router => {
   router
     .route('/users/:id')
     .get(
-      // restrictTo('manager', 'admin'),
+      restrictTo('manager', 'admin'),
       validationsParam,
       middlewaresValidation,
       getUser
     )
     .patch(
-      // validationsParam,
+      restrictTo('manager', 'admin'),
+      validationsParam,
       updateUserValidation,
       middlewaresValidation,
       updateUser

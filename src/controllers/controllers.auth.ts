@@ -7,10 +7,8 @@ import User from '../models/models.user';
 import bcrypt from 'bcrypt';
 
 // send token to client
-const signToken = (id: any) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || '', {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+const signToken = (id: any, secret: string) => {
+  return jwt.sign({ id }, secret);
 };
 
 // login user
@@ -23,12 +21,12 @@ export const login = catchAsync(
 
     // check if user exists && password is correct
     const user = await User.findOne({ email }).select('+password');
-    // if (!user || !(await correctPassword(password, user.password))) {
-    //   return next(new AppError('Incorrect email or password', 401));
-    // }
+    if (!user || !(await user.correctPassword(password, user.password))) {
+      return next(new AppError('Incorrect email or password', 401));
+    }
 
     // if everything is ok, send token to client
-    const token = signToken(user?._id);
+    const token = signToken(user?._id, process.env.JWT_SECRET || '');
     res.status(200).json({
       status: 'success',
       token,
@@ -36,20 +34,11 @@ export const login = catchAsync(
   }
 );
 
-// const correctPassword = async function (
-//   candidatePassword: string,
-//   userPassword: string
-// ) {
-//   return await bcrypt.compare(candidatePassword, userPassword);
-// };
-
 // register user
 export const register = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     const newUser = await User.create(req.body);
-
-    const token = signToken(newUser._id);
-
+    const token = signToken(newUser._id, process.env.JWT_SECRET || '');
     res.status(200).json({
       status: 'success',
       token,

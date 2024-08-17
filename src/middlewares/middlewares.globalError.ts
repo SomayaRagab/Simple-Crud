@@ -17,7 +17,7 @@ function globalError(
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
-    error: process.env.NODE_ENV === 'development' ? err : {},
+        error: process.env.NODE_ENV === 'development' ? err.stack : {},
   });
 }
 
@@ -25,7 +25,7 @@ function globalError(
 
 
 const handleDuplicateFieldsDB = (err: any) => {
-  console.log('-------');
+
   const value = err.keyValue;
   const message = `Duplicate field value: ${value.email || ''} ${
     value.name || ''
@@ -42,7 +42,6 @@ const handleValidationErrorDB = (err: any) => {
 };
 
 const handleCastErrorDB = (err: any) => {
-    console.log('-------***');
   const message = `Invalid ${err.path}: ${err.value}.`;
   // 400: Bad Request
   return new AppError(message, 400);

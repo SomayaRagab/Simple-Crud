@@ -5,6 +5,9 @@ import {
   getAllPosts,
   updatePost,
   deletePost,
+  setUserId,
+  getMyPosts,
+  notUpdatedOwnPostUser,
 } from '../controllers/controllers.post';
 
 import { postValidate, updateValidate } from '../validations/validations.post';
@@ -12,15 +15,25 @@ import { postValidate, updateValidate } from '../validations/validations.post';
 import middlewaresValidation from '../middlewares/middlewares.validation';
 
 import validationsParam from '../validations/validations.param';
-import { restrictTo } from '../middlewares/middlewares.auth';
+import { protect, restrictTo } from '../middlewares/middlewares.auth';
 
 export default (router: Router): Router => {
-  router.route('/posts').get(restrictTo('manager', 'admin'), getAllPosts).post(
-    restrictTo('user', 'manager', 'admin'),
-    //   postValidate,
-    //   middlewaresValidation,
-    createPost
-  );
+  // protected routes
+  router.use(protect);
+
+  // get all posts for logged in user
+  router.get('/posts/me', restrictTo('user', 'manager', 'admin'), getMyPosts);
+
+  router
+    .route('/posts')
+    .get(restrictTo('user', 'manager', 'admin'), getAllPosts)
+    .post(
+      restrictTo('user', 'manager', 'admin'),
+      postValidate,
+      setUserId,
+      middlewaresValidation,
+      createPost
+    );
   router
     .route('/posts/:id')
     .get(restrictTo('user', 'manager', 'admin'), getPost)
@@ -29,6 +42,7 @@ export default (router: Router): Router => {
       validationsParam,
       updateValidate,
       middlewaresValidation,
+      notUpdatedOwnPostUser,
       updatePost
     )
     .delete(

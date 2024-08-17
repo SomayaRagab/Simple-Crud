@@ -1,7 +1,25 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema(
+// Define the interface for the User document
+interface IUser extends Document {
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: 'user' | 'admin';
+  password: string;
+  passwordChangedAt: Date;
+
+  correctPassword(
+    candidatePassword: string,
+    userPassword: string
+  ): Promise<boolean>;
+
+  changedPasswordAfter(JWTTimestamp: number): boolean;
+}
+
+// Define the schema for the User model
+const userSchema = new Schema<IUser>(
   {
     firstName: {
       type: String,
@@ -27,16 +45,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: {
         values: ['user', 'admin'],
-        message: 'Role is either: user , manager or admin',
+        message: 'Role is either: user or admin',
       },
       default: 'user',
-      selected: false,
     },
     password: {
       type: String,
       select: false,
       required: [true, 'Please provide a password'],
-      // validate password length 8 characters and at least 1 number and 1 special character and 1 uppercase letter and 1 lowercase letter
       validate: {
         validator: function (v: string) {
           const passwordRegex =
@@ -44,9 +60,10 @@ const userSchema = new mongoose.Schema(
           return passwordRegex.test(v);
         },
         message: (props: any) =>
-          `Password must be at least 8 characters long and contain at least 1 number, 1 special character, 1 uppercase letter and 1 lowercase letter`,
+          `Password must be at least 8 characters long and contain at least 1 number, 1 special character, 1 uppercase letter, and 1 lowercase letter`,
       },
     },
+    passwordChangedAt: Date,
   },
   {
     timestamps: true,
@@ -54,21 +71,39 @@ const userSchema = new mongoose.Schema(
 );
 
 // Define methods on the user schema
-// userSchema.methods.correctPassword = async function (
-//   candidatePassword: string,
-//   userPassword: string
-// ) {
-//   return await bcrypt.compare(candidatePassword, userPassword);
-// };
+userSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+  userPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// check user change password after the token was issued
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = this.passwordChangedAt.getTime() / 1000;
+    10;
+
+    return JWTTimestamp < changedTimeStamp; // 300 < 200
+  }
+
+  // false means not changed
+  return false;
+};
 
 // Encrypt password before saving
 userSchema.pre('save', async function (next) {
-  const user: any = this;
-  if (!user.isModified('password')) return next();
-  user.password = await bcrypt.hash(user.password, 12);
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Update the passwordChangedAt field to just before the current time
+  if (!this.isNew) {
+    this.passwordChangedAt = new Date(Date.now() - 1000); // Set to 1 second before now
+  }
   next();
 });
 
-const User = mongoose.model('User', userSchema);
+// Create the User model
+const User = mongoose.model<IUser>('User', userSchema);
 
 export default User;

@@ -10,7 +10,7 @@ export const createUserValidation = [
     .isString()
     .isLength({ min: 3, max: 50 })
     .withMessage('Last name must be between 3 and 50 characters'),
-  body('email').isEmail(),
+  body('email').isEmail().withMessage('Please provide a valid email'),
   body('password')
     .isStrongPassword()
     .withMessage('Password is not strong enough'),
@@ -23,6 +23,7 @@ export const createUserValidation = [
   body('role')
     .optional()
     .isIn(['user', 'admin', 'manager'])
+    .default('user')
     .withMessage('Role is either: user , manager or admin'),
 ];
 

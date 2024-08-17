@@ -1,11 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/utils.appError';
 import catchAsync from '../utils/utils.catchAsync';
+import APIFeatures from '../utils/apiFeature';
 
 // get all documents
 const getAll = (Model: any) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const documents = await Model.find({});
+    const apiFeatures = new APIFeatures(Model.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const documents = await apiFeatures.query;
+
     res.status(200).json({
       status: 'success',
       results: documents.length,
@@ -13,14 +21,12 @@ const getAll = (Model: any) =>
         documents,
       },
     });
-
-    console.log('get all documents');
   });
 
 // get document by id
 const getOne = (Model: any) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    console.log('get document by id');
+
     const document = await Model.findById(req.params.id);
     if (!document) {
       return next(new AppError('No document found with that ID', 404));
