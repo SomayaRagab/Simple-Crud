@@ -66,9 +66,9 @@ The server will start on the port defined in your `.env` file.
 
 ### User Profile Routes
 
-- \*\*GET /api/v1/profile: Get a user profile.
-- \*\*PATCH /api/v1/profile: Update a user profile.
-- \*\*PATCH /api/v1/profile/password: Update a user password loggin user.
+- **GET /api/v1/profile**: Get a user profile.
+- **PATCH /api/v1/profile**: Update a user profile.
+- **PATCH /api/v1/profile/password**: Update a user password loggin user.
 
 ### Post Routes
 
